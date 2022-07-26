@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <div class="columns">
+        <div class="column box is-9">
+            <div class="title has-text-warning has-text-centered">{{ article }}</div>
+            <img src="{{ article.thumb.url }}" alt="" class="image is-centered container" style="min-width: 90%; height:40%; border-radius: 5px ; margin:0;">
+            <br>
+            <div class="subtitle has-text-dark has-text-centered">{{article.text}}</div>
+
+            
+            {% if user not in article.likes.all and user not in article.dislikes.all %}
+            <div class="columns">
+                <div class="column is-1">
+                    <form action="{% url 'article_like' article.slug %}" method="post" class="has-text-right">
+                        {% csrf_token %}
+                        <button type="submit" class="button">
+                            <ion-icon name="thumbs-up-outline"></ion-icon>
+                            <span class="ml-2">{{ article.total_likes }}</span>
+                           
+                        </button>
+                    </form>
+                </div>
+                <div class="column is-1">
+                    <form action="{% url 'article_dislike' article.slug %}" method="post" class="has-text-right">
+                        {% csrf_token %}
+                        <button type="submit" class="button">
+                            <ion-icon name="thumbs-down-outline"></ion-icon>
+                            <span class="ml-2">{{ article.total_dislikes}}</span>
+                       
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if user  in article.likes.all and user not in article.dislikes.all %}
+            <div class="columns">
+                <div class="column is-1">
+                    <form action="{% url 'article_like' article.slug %}" method="post" class="has-text-right">
+                        {% csrf_token %}
+                        <button type="submit" class="button">
+                            <ion-icon name="thumbs-up-outline"></ion-icon>
+                            <span class="ml-2">{{ article.total_likes }}</span>
+                           
+                        </button>
+                    </form>
+                </div>
+                <div class="column is-1">
+                    <form action="{% url 'article_dislike' article.slug %}" method="post" class="has-text-right">
+                        {% csrf_token %}
+                        <button type="submit" class="button">
+                            <ion-icon name="thumbs-down-outline"></ion-icon>
+                            
+                       
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if user not in article.likes.all and user  in article.dislikes.all %}
+            <div class="columns">
+                <div class="column is-1">
+                    <form action="{% url 'article_like' article.slug %}" method="post" class="has-text-right">
+                        {% csrf_token %}
+                        <button type="submit" class="button">
+                            <ion-icon name="thumbs-up-outline"></ion-icon>
+                            
+                           
+                        </button>
+                    </form>
+                </div>
+                <div class="column is-1">
+                    <form action="{% url 'article_dislike' article.slug %}" method="post" class="has-text-right">
+                        {% csrf_token %}
+                        <button type="submit" class="button">
+                            <ion-icon name="thumbs-down-outline"></ion-icon>
+                            
+                       
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {% endif %}
+
+            {% if not artical.comment_set.all %}
+            <div class="has-text-centered has-text-grey-light is-size-5 mx-3">
+                No comments yet.Be first to leave comment...
+            </div>
+            {% endif %}
+
+
+            <form method="POST" enctype="multipart/form-data" class="comment">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="button is-success mt-3 is-fullwidth">Submit</button>
+
+            </form>
+
+            {% for comment in article.comment_set.all %}
+            <article class="message is-info">
+                <div class="message-header">
+                    {% if user == comment.user %}
+                    Added by {{ comment.user }} at {{ comment.date_added }}
+
+                    <div class="has-text-right is-size-5">
+
+                        <a href="{% url 'comment_edit' slug=article.slug pk=comment.pk %}" class="is-info"><ion-icon class="create-outline"></ion-icon></a>
+
+            
+                        <a href="{% url 'delete-comment' slug=article.slug pk=comment.pk %}" style="text-decoration:none"><ion-icon name="trash-otline"></ion-icon></a>
+                    </div>
+                    {% else %}
+                    tomonidan {{ comment.user }} at {{ comment.date_added }}
+                    {% endif %}
+                    
+                </div>
+                <div class="message-body">{{ comment.body }}</div>
+            </article>
+            {% endfor %}
+            
+
+      
+
+
+
+
+            <div class="has-text-grey is-size-6 has-text-right is-italic">
+                <p class="datetime">date of publication:{{ article.date }}</p>
+                {% if user == article.author %}
+                <p class="content">pulished by you</p>
+                {% else %}
+                <p class="content">Pulished by: {{ article.author }}</p>
+                {% endif %}
+            </div>
+            
+
+        </div>
+        <br>
+        <br>
+
+
+
+        {% if user == article.author %}
+        <div class="has-text-right">
+            <a href="{% url 'article_edit' article.slug %}" class="button is-info">
+                <i class="fa-solid fa-calendar-lines-pen"></i>
+            </a>
+            <a href="{% url 'article_delete' article.slug %}" class="button is-danger">
+                <i class="fa-solid fa-trash-can"></i>
+            </a>
+        </div>
+
+        {% else %}
+       
+
+        {% endif %}
+
+            
+
+          
+        </div>
+       
+    </div>
+</div>
+
+{% endblock %}

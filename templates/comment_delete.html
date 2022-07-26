@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+      <form method="post" class="site-form has-backround-light">
+        {% csrf_token %}
+        <p class="content is-size-4 mb-4"> siz izohingizni ochirishni xoxlaysizmi? </p>
+        <div class="has-text-centered">
+            <button type="submit" class="button is-primary">Tasdiqlash</button>
+            <a href="{% url 'article_post' comment.article.slug %}" class="button is-danger">yoq</a>
+        </div>
+      </form>
+
+{% endblock %}
